@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Integer Jump Game</title>
+  <style>
+    body {
+      background: linear-gradient(135deg, #1e1e2f, #2e3a59);
+      color: #fff;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      color: #ffeb3b;
+      margin-top: 20px;
+    }
+    #game {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      margin: 30px auto;
+      height: 300px;
+      background: #222;
+      border-radius: 15px;
+      overflow: hidden;
+      border: 3px solid #444;
+    }
+    #runner {
+      position: absolute;
+      bottom: 20px;
+      left: 50px;
+      width: 60px;
+      height: 60px;
+      background: url('https://cdn-icons-png.flaticon.com/512/4151/4151030.png') no-repeat center/cover;
+    }
+    #obstacle {
+      position: absolute;
+      bottom: 20px;
+      right: -80px;
+      width: 60px;
+      height: 60px;
+      background: url('https://cdn-icons-png.flaticon.com/512/616/616408.png') no-repeat center/cover;
+    }
+    .jump {
+      animation: jumpAnim 1s ease;
+    }
+    @keyframes jumpAnim {
+      0% { bottom: 20px; }
+      40% { bottom: 120px; }
+      60% { bottom: 120px; }
+      100% { bottom: 20px; }
+    }
+    #question {
+      font-size: 28px;
+      margin: 20px 0;
+    }
+    .options {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .option {
+      background: #444;
+      padding: 12px 20px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 20px;
+      transition: 0.3s;
+    }
+    .option:hover {
+      background: #666;
+      transform: scale(1.1);
+    }
+    #feedback {
+      font-size: 24px;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    #score {
+      margin-top: 15px;
+      font-size: 20px;
+      color: #80ffea;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🏃 Integer Jump Challenge 🏃‍♀️</h1>
+  <div id="game">
+    <div id="runner"></div>
+    <div id="obstacle"></div>
+  </div>
+
+  <div id="question"></div>
+  <div class="options" id="options"></div>
+  <div id="feedback"></div>
+  <div id="score">Score: 0</div>
+
+  <script>
+    const runner = document.getElementById("runner");
+    const obstacle = document.getElementById("obstacle");
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const feedbackEl = document.getElementById("feedback");
+    const scoreEl = document.getElementById("score");
+
+    let score = 0;
+
+    function randomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function generateQuestion() {
+      let a = randomInt(-10, 10);
+      let b = randomInt(-10, 10);
+      let ops = ["+", "-"];
+      let op = ops[randomInt(0, ops.length - 1)];
+      let question = `${a} ${op} ${b}`;
+      let answer = eval(question);
+      return { question, answer };
+    }
+
+    function showQuestion() {
+      const q = generateQuestion();
+      questionEl.textContent = `Solve: ${q.question}`;
+      optionsEl.innerHTML = "";
+      let answers = [q.answer];
+      while (answers.length < 4) {
+        let fake = q.answer + randomInt(-5, 5);
+        if (!answers.includes(fake)) answers.push(fake);
+      }
+      answers.sort(() => Math.random() - 0.5);
+
+      answers.forEach(ans => {
+        const btn = document.createElement("div");
+        btn.className = "option";
+        btn.textContent = ans;
+        btn.onclick = () => checkAnswer(ans, q.answer);
+        optionsEl.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(choice, correct) {
+      if (choice === correct) {
+        score++;
+        runner.classList.add("jump");
+        setTimeout(() => runner.classList.remove("jump"), 1000);
+
+        feedbackEl.style.color = "#4caf50";
+        const messages = ["Awesome!", "You rock!", "Math Champ!", "Keep it up!"];
+        feedbackEl.textContent = messages[Math.floor(Math.random() * messages.length)];
+
+      } else {
+        feedbackEl.style.color = "#f44336";
+        feedbackEl.textContent = "Oops! Try again!";
+      }
+      scoreEl.textContent = `Score: ${score}`;
+      setTimeout(showQuestion, 1200);
+    }
+
+    // start game
+    showQuestion();
+  </script>
+
+</body>
+</html>
